@@ -15,6 +15,7 @@
 
 ## ✨ Features
 
+### 🎯 **Core Features**
 - **📋 Declarative Schema Definition**: Define entire forms using JSON schemas
 - **🔄 Dynamic Conditional Logic**: Show/hide fields based on other field values
 - **✅ Comprehensive Validation**: Built-in and custom validation with internationalization support
@@ -22,15 +23,24 @@
 - **♿ Accessibility First**: WCAG compliant forms with proper ARIA attributes
 - **🚀 Performance Optimized**: Built on React Hook Form for optimal performance
 - **📦 TypeScript Ready**: Full TypeScript support with comprehensive type definitions
-- **🔧 Framework Agnostic**: Works with any CSS framework or design system
+
+### 🔥 **Advanced Features** (New!)
+- **📁 Smart File Upload**: Drag & drop interface with progress tracking, image preview, and validation
+- **🔍 Async Autocomplete**: Search-as-you-type with debouncing, templates, and API integration
+- **📅 Business Date/Time Picker**: Business rules, timezone support, and restriction handling
+- **🔗 Cross-field Validation**: Dependencies between fields with real-time validation
+- **🧮 Computed Fields**: Auto-calculated values based on other field data
+- **⚡ Real-time Updates**: Live form state management and analytics
 
 ## 📦 Installation
 
 ```bash
-npm install @fivexlabs/conform-react react-hook-form yup
+npm install @fivexlabs/conform-react react-hook-form yup date-fns
 # or
-yarn add @fivexlabs/conform-react react-hook-form yup
+yarn add @fivexlabs/conform-react react-hook-form yup date-fns
 ```
+
+> **Note**: `date-fns` is required for the advanced date/time picker functionality.
 
 ## 🚀 Quick Start
 
@@ -81,6 +91,119 @@ function App() {
       onFormChange={(data) => console.log('Form changed:', data)}
     />
   );
+}
+```
+
+## 🔥 Advanced Features Showcase
+
+### 📁 Smart File Upload
+
+Create powerful file upload experiences with drag & drop, progress tracking, and validation:
+
+```typescript
+{
+  name: "documents",
+  type: "fileUpload",
+  label: "Project Documents",
+  props: {
+    multiple: true,
+    accept: ['.pdf', '.docx', '.jpg', '.png'],
+    maxSize: 10 * 1024 * 1024, // 10MB
+    maxFiles: 5,
+    preview: true,
+    upload: {
+      endpoint: '/api/upload',
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer token123' }
+    }
+  },
+  onUploadProgress: (progress, file) => console.log(`${file.name}: ${progress}%`),
+  onUploadComplete: (response, file) => console.log('Upload completed:', response)
+}
+```
+
+### 🔍 Async Autocomplete
+
+Build smart search interfaces with real-time suggestions:
+
+```typescript
+{
+  name: "assignee",
+  type: "autocomplete",
+  label: "Project Assignee",
+  props: {
+    searchEndpoint: '/api/users/search',
+    displayKey: 'name',
+    valueKey: 'id',
+    debounce: 300,
+    minChars: 2,
+    template: '{{name}} - {{department}} ({{email}})',
+    multiple: false
+  }
+}
+```
+
+### 📅 Business Date/Time Picker
+
+Handle complex business rules with smart date/time selection:
+
+```typescript
+{
+  name: "deadline",
+  type: "dateTime",
+  label: "Project Deadline",
+  props: {
+    includeTime: true,
+    format: 'yyyy-MM-dd HH:mm',
+    restrictions: {
+      minDate: 'today',
+      businessDaysOnly: true,
+      disabledDays: ['saturday', 'sunday'],
+      disabledDates: ['2024-12-25', '2024-01-01']
+    }
+  }
+}
+```
+
+### 🔗 Cross-field Validation
+
+Create intelligent forms with field dependencies:
+
+```typescript
+{
+  name: "endDate",
+  type: "dateTime",
+  label: "Project End Date",
+  validation: {
+    custom: async (value, formData) => {
+      if (value <= formData.startDate) {
+        return 'End date must be after start date';
+      }
+      return true;
+    },
+    dependencies: ['startDate'] // Re-validate when startDate changes
+  }
+}
+```
+
+### 🧮 Computed Fields
+
+Auto-calculate values based on other field data:
+
+```typescript
+{
+  name: "totalCost",
+  type: "text",
+  label: "Total Cost",
+  props: { disabled: true }, // Read-only
+  computed: {
+    formula: (formData) => {
+      const hours = formData.estimatedHours || 0;
+      const rate = formData.hourlyRate || 0;
+      return `$${(hours * rate).toFixed(2)}`;
+    },
+    dependencies: ['estimatedHours', 'hourlyRate']
+  }
 }
 ```
 
@@ -377,6 +500,10 @@ npm test
 | `customComponents` | `Record<string, React.ComponentType<any>>` | ❌ | Custom components for field types |
 | `loading` | `boolean` | ❌ | Shows loading state |
 | `disabled` | `boolean` | ❌ | Disables entire form |
+
+## 📋 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of all changes and new features.
 
 ## 🤝 Contributing
 

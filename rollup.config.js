@@ -8,12 +8,13 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'dist/index.js',
+      file: 'dist/cjs/index.js',
       format: 'cjs',
       sourcemap: true,
+      exports: 'named',
     },
     {
-      file: 'dist/index.esm.js',
+      file: 'dist/esm/index.js',
       format: 'esm',
       sourcemap: true,
     },
@@ -27,9 +28,9 @@ export default {
     typescript({
       tsconfig: './tsconfig.json',
       declaration: true,
-      declarationDir: 'dist',
+      declarationDir: 'dist/types',
     }),
     terser(),
   ],
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', 'react-hook-form', 'yup', 'date-fns'],
 }; 
